@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 first_name = ['Alice', 'Bob', 'Charlie', 'David', 'Eve', 'Frank', 'Grace', 'Hank', 'Ivy', 'Jack']
 
 def generate_customer_codes():
+    """Generate customer codes based on the first name and a random number."""
     customer_codes = []
     for name in first_name:
         code = name[:3].upper() + str(random.randint(10, 99)) + "0"

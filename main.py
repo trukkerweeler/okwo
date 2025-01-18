@@ -50,6 +50,7 @@ def home():
 
 
 def get_workorders():
+    """Get all work orders"""
     conn = sqlite3.connect('okwo.db')
     cursor = conn.cursor()
     cursor.execute("SELECT w.*, c.customer_name FROM workorders w left join customers c on w.customer_code = c.customer_code")
@@ -59,6 +60,7 @@ def get_workorders():
 
 @app.route('/create', methods=['GET', 'POST'])
 def create_workorder():
+    """Create a new work order"""
     if request.method == 'POST':
         workorder_description = request.form['workorder_description']
         workorder_status = request.form['workorder_status']
@@ -74,6 +76,8 @@ def create_workorder():
         conn.commit()
         conn.close()
         # return jsonify({"message": "Work order created successfully!"})
+        request.form = request.form.copy()
+        request.form.clear()
         # redirect to home page
         return home()
     return '''
@@ -104,10 +108,12 @@ def create_workorder():
             Customer Code: <input type="text" name="customer_code"><br>
             <input type="submit" value="Create Work Order">
         </form>
+        <a href="/">Back to Work Orders</a>
     '''
 
 @app.route('/edit/<int:workorder_id>', methods=['GET', 'POST'])
 def edit_workorder(workorder_id):
+    """Edits a work order"""
     if request.method == 'POST':
         workorder_description = request.form['workorder_description']
         workorder_status = request.form['workorder_status']
@@ -127,6 +133,8 @@ def edit_workorder(workorder_id):
     cursor.execute("SELECT w.*, c.customer_code FROM workorders w left join customers c on w.customer_code = c.customer_code WHERE workorder_id=?", (workorder_id,))
     workorder = cursor.fetchone()
     conn.close()
+    request.form = request.form.copy()
+    request.form.clear()
     return '''
         <h1>Edit Work Order</h1>
         <form method="post">
@@ -181,6 +189,7 @@ def edit_workorder(workorder_id):
 
 @app.route('/delete/<int:workorder_id>', methods=['POST'])
 def delete_workorder(workorder_id):
+    """Deletes a work order"""
     conn = sqlite3.connect('okwo.db')
     cursor = conn.cursor()
     cursor.execute('DELETE FROM workorders WHERE workorder_id=?', (workorder_id,))
